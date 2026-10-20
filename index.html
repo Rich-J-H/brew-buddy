@@ -194,11 +194,17 @@
             <input id="rate" type="number" inputmode="decimal" min="0" step="0.1" value="3"><span class="unit">L/h</span>
             <button type="button" data-step="1" aria-label="Increase">+</button></div>
         </div>
+        <div class="field">
+          <label for="loss">Kettle &amp; transfer loss <small>trub, hops, chiller, hoses</small></label>
+          <div class="input"><button type="button" data-step="-1" aria-label="Decrease">−</button>
+            <input id="loss" type="number" inputmode="decimal" min="0" step="0.5" value="0"><span class="unit">L</span>
+            <button type="button" data-step="1" aria-label="Increase">+</button></div>
+        </div>
 
         <details>
           <summary>System constants</summary>
           <div class="field">
-            <label for="dead">Dead space <small>false bottom, pump, pipework</small></label>
+            <label for="dead">Dead space <small>recovered; adds to strike only</small></label>
             <div class="input"><input id="dead" type="number" inputmode="decimal" min="0" step="0.5" value="8"><span class="unit">L</span></div>
           </div>
           <div class="field">
@@ -243,11 +249,12 @@
             <tr><td>Into the fermenter</td><td id="b-batch">–</td></tr>
             <tr><td>Boil-off<span class="sub" id="b-boil-sub"></span></td><td id="b-boil">–</td></tr>
             <tr><td>Grain absorption<span class="sub" id="b-abs-sub"></span></td><td id="b-abs">–</td></tr>
-            <tr><td>G40 dead space</td><td id="b-dead">–</td></tr>
+            <tr><td>Kettle &amp; transfer loss</td><td id="b-loss">–</td></tr>
             <tr class="sum"><td>Total water</td><td id="b-total">–</td></tr>
           </tbody>
         </table>
         <p style="margin:14px 0 0;color:var(--cream-dim);font-size:14px">Pre-boil volume: <b id="preboil" style="color:var(--cream)">–</b></p>
+        <p style="margin:6px 0 0;color:var(--cream-dim);font-size:14px">G40 dead space: <b id="b-dead" style="color:var(--hop)">–</b> in the strike, recovered into the boil, so it isn't in the total.</p>
       </div>
     </section>
   </main>
@@ -259,7 +266,7 @@
 <script>
   const { calculate, round } = BrewCalc;
   const $ = id => document.getElementById(id);
-  const ids = ['batch', 'grain', 'boil', 'rate', 'dead', 'absorb', 'ratio'];
+  const ids = ['batch', 'grain', 'boil', 'rate', 'loss', 'dead', 'absorb', 'ratio'];
   const fmt = n => round(n, 1).toFixed(1);
   const litres = n => `${fmt(n)} L`;
 
@@ -282,7 +289,7 @@
     if (!v) return;
     const r = calculate({
       batchLitres: v.batch, grainKg: v.grain, boilMinutes: v.boil, boilOffPerHour: v.rate,
-      deadSpace: v.dead, absorption: v.absorb, mashRatio: v.ratio,
+      kettleLoss: v.loss, deadSpace: v.dead, absorption: v.absorb, mashRatio: v.ratio,
     });
 
     $('total').firstChild.nodeValue = fmt(r.total);
@@ -299,6 +306,7 @@
     $('b-boil-sub').textContent = `${v.boil} min at ${v.rate} L/h`;
     $('b-abs').textContent = litres(r.breakdown.grainAbsorption);
     $('b-abs-sub').textContent = `${v.grain} kg at ${v.absorb} L/kg`;
+    $('b-loss').textContent = litres(r.breakdown.kettleLoss);
     $('b-dead').textContent = litres(r.breakdown.deadSpace);
     $('b-total').textContent = litres(r.total);
     $('preboil').textContent = litres(r.preBoil);
