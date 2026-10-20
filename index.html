@@ -9,15 +9,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --stout: #17120e;
-    --stout-2: #221a14;
-    --stout-3: #2e241b;
-    --cream: #f4ead8;
-    --cream-dim: #c9bba3;
-    --amber: #f2a541;
-    --amber-deep: #d9782d;
-    --hop: #9bc53d;
-    --line: rgba(244, 234, 216, 0.14);
+    --ink: #0b1a1c;
+    --ink-2: #10262a;
+    --ink-3: #163338;
+    --text: #eef6f4;
+    --text-dim: #9fbab6;
+    --gold: #e0b54a;
+    --gold-deep: #b8862b;
+    --teal: #2ec4b6;
+    --teal-deep: #138a80;
+    --line: rgba(238, 246, 244, 0.12);
     --display: 'Anton', 'Impact', 'Arial Narrow Bold', sans-serif;
     --body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   }
@@ -26,10 +27,10 @@
     margin: 0;
     min-height: 100vh;
     background:
-      radial-gradient(1200px 600px at 85% -10%, rgba(242,165,65,0.18), transparent 60%),
-      radial-gradient(900px 500px at -10% 110%, rgba(155,197,61,0.10), transparent 60%),
-      var(--stout);
-    color: var(--cream);
+      radial-gradient(1200px 600px at 85% -10%, rgba(224,181,74,0.16), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(46,196,182,0.14), transparent 60%),
+      var(--ink);
+    color: var(--text);
     font: 16px/1.5 var(--body);
     padding: 0 20px 48px;
   }
@@ -38,20 +39,20 @@
   header {
     display: flex; align-items: center; gap: 16px;
     padding: 28px 0 8px;
-    border-bottom: 2px solid var(--amber);
+    border-bottom: 2px solid var(--gold);
   }
   .badge {
     flex: none; width: 64px; height: 64px; border-radius: 50%;
-    background: var(--amber); color: var(--stout);
+    background: var(--gold); color: var(--ink);
     display: grid; place-items: center;
     font: 28px/1 var(--display); letter-spacing: 1px;
-    box-shadow: 0 0 0 4px var(--stout), 0 0 0 6px var(--amber);
+    box-shadow: 0 0 0 4px var(--ink), 0 0 0 6px var(--gold);
   }
   .brand h1 {
     margin: 0; font: 44px/1 var(--display); letter-spacing: 1.5px; text-transform: uppercase;
   }
-  .brand p { margin: 4px 0 0; color: var(--cream-dim); font-size: 14px; letter-spacing: 2px; text-transform: uppercase; }
-  .brand p b { color: var(--hop); font-weight: 800; }
+  .brand p { margin: 4px 0 0; color: var(--text-dim); font-size: 14px; letter-spacing: 2px; text-transform: uppercase; }
+  .brand p b { color: var(--teal); font-weight: 800; }
 
   main {
     display: grid; gap: 24px; margin-top: 28px;
@@ -60,46 +61,46 @@
   @media (max-width: 820px) { main { grid-template-columns: 1fr; } }
 
   .card {
-    background: linear-gradient(180deg, var(--stout-2), var(--stout));
+    background: linear-gradient(180deg, var(--ink-2), var(--ink));
     border: 1px solid var(--line);
     border-radius: 18px;
     padding: 24px;
   }
   .card h2 {
     margin: 0 0 18px; font: 22px/1 var(--display); letter-spacing: 1.5px;
-    text-transform: uppercase; color: var(--amber);
+    text-transform: uppercase; color: var(--gold);
   }
 
   .field { margin-bottom: 16px; }
   .field label {
     display: flex; justify-content: space-between; align-items: baseline;
     font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
-    color: var(--cream-dim); margin-bottom: 6px;
+    color: var(--text-dim); margin-bottom: 6px;
   }
   .field label small { text-transform: none; letter-spacing: 0; font-weight: 400; }
   .input {
     display: flex; align-items: center;
-    background: var(--stout-3); border: 1px solid var(--line); border-radius: 12px;
+    background: var(--ink-3); border: 1px solid var(--line); border-radius: 12px;
     transition: border-color .15s, box-shadow .15s;
   }
-  .input:focus-within { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(242,165,65,0.25); }
+  .input:focus-within { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(224,181,74,0.3); }
   .input input {
     flex: 1; min-width: 0; background: none; border: 0; outline: none;
-    color: var(--cream); font: 600 20px/1 var(--body); padding: 12px 14px;
+    color: var(--text); font: 600 20px/1 var(--body); padding: 12px 14px;
     -moz-appearance: textfield;
   }
   .input input::-webkit-outer-spin-button, .input input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .input .unit { padding-right: 6px; color: var(--cream-dim); font-size: 14px; }
+  .input .unit { padding-right: 6px; color: var(--text-dim); font-size: 14px; }
   .input button {
     flex: none; width: 40px; height: 44px; border: 0; background: none;
-    color: var(--amber); font: 600 22px/1 var(--body); cursor: pointer;
+    color: var(--gold); font: 600 22px/1 var(--body); cursor: pointer;
   }
-  .input button:hover { color: var(--cream); }
+  .input button:hover { color: var(--text); }
   .field.invalid .input { border-color: #e5533d; }
 
   details { margin-top: 8px; border-top: 1px dashed var(--line); padding-top: 14px; }
   summary {
-    cursor: pointer; color: var(--hop); font-size: 13px; font-weight: 600;
+    cursor: pointer; color: var(--teal); font-size: 13px; font-weight: 600;
     letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px;
   }
 
@@ -115,45 +116,45 @@
 
   /* The vessel: sparge sits on top of strike, filled to scale. */
   .vessel {
-    position: relative; border: 3px solid var(--cream); border-top: 0;
+    position: relative; border: 3px solid var(--text); border-top: 0;
     border-radius: 0 0 22px 22px; min-height: 240px;
     display: flex; flex-direction: column-reverse; overflow: hidden;
     background: repeating-linear-gradient(0deg, transparent 0 23px, var(--line) 23px 24px);
   }
   .vessel::before, .vessel::after {
-    content: ''; position: absolute; top: 0; width: 10px; height: 3px; background: var(--cream);
+    content: ''; position: absolute; top: 0; width: 10px; height: 3px; background: var(--text);
   }
   .vessel::before { left: -10px; } .vessel::after { right: -10px; }
   .layer { transition: height .4s cubic-bezier(.2,.8,.2,1); }
-  .layer.strike { background: linear-gradient(180deg, var(--amber), var(--amber-deep)); }
-  .layer.sparge { background: linear-gradient(180deg, #ffd27a, var(--amber)); opacity: .55; }
+  .layer.strike { background: linear-gradient(180deg, var(--gold), var(--gold-deep)); }
+  .layer.sparge { background: linear-gradient(180deg, var(--teal), var(--teal-deep)); opacity: .85; }
 
   .figures { display: flex; flex-direction: column; gap: 14px; justify-content: center; }
-  .total-label { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--cream-dim); }
-  .total { font: 72px/0.95 var(--display); color: var(--cream); letter-spacing: 1px; }
-  .total span { font-size: 28px; color: var(--amber); margin-left: 6px; }
+  .total-label { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
+  .total { font: 72px/0.95 var(--display); color: var(--text); letter-spacing: 1px; }
+  .total span { font-size: 28px; color: var(--gold); margin-left: 6px; }
   .split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .pill {
-    border-radius: 14px; padding: 12px 14px; background: var(--stout-3); border: 1px solid var(--line);
+    border-radius: 14px; padding: 12px 14px; background: var(--ink-3); border: 1px solid var(--line);
   }
-  .pill .k { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--cream-dim); }
+  .pill .k { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); }
   .pill .k i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
   .pill .v { font: 34px/1.1 var(--display); letter-spacing: 1px; }
-  .pill .v small { font: 600 14px var(--body); color: var(--cream-dim); margin-left: 4px; }
+  .pill .v small { font: 600 14px var(--body); color: var(--text-dim); margin-left: 4px; }
 
   .note {
-    border-left: 3px solid var(--hop); background: rgba(155,197,61,0.08);
-    padding: 10px 14px; border-radius: 0 10px 10px 0; font-size: 14px; color: var(--cream);
+    border-left: 3px solid var(--teal); background: rgba(46,196,182,0.08);
+    padding: 10px 14px; border-radius: 0 10px 10px 0; font-size: 14px; color: var(--text);
   }
-  .note.warn { border-color: var(--amber); background: rgba(242,165,65,0.10); }
+  .note.warn { border-color: var(--gold); background: rgba(224,181,74,0.10); }
 
   table { width: 100%; border-collapse: collapse; font-size: 15px; }
   td { padding: 9px 0; border-bottom: 1px solid var(--line); }
   td:last-child { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
-  td .sub { display: block; font-size: 12px; color: var(--cream-dim); }
-  tr.sum td { border-bottom: 0; border-top: 2px solid var(--amber); font-weight: 800; color: var(--amber); padding-top: 12px; }
+  td .sub { display: block; font-size: 12px; color: var(--text-dim); }
+  tr.sum td { border-bottom: 0; border-top: 2px solid var(--gold); font-weight: 800; color: var(--gold); padding-top: 12px; }
 
-  footer { margin-top: 28px; color: var(--cream-dim); font-size: 13px; text-align: center; }
+  footer { margin-top: 28px; color: var(--text-dim); font-size: 13px; text-align: center; }
 </style>
 </head>
 <body>
@@ -233,8 +234,8 @@
               <div class="total" id="total">–<span>L</span></div>
             </div>
             <div class="split">
-              <div class="pill"><div class="k"><i style="background:var(--amber)"></i>Strike</div><div class="v" id="strike">–<small>L</small></div></div>
-              <div class="pill"><div class="k"><i style="background:#ffd27a;opacity:.7"></i>Sparge</div><div class="v" id="sparge">–<small>L</small></div></div>
+              <div class="pill"><div class="k"><i style="background:var(--gold)"></i>Strike</div><div class="v" id="strike">–<small>L</small></div></div>
+              <div class="pill"><div class="k"><i style="background:var(--teal)"></i>Sparge</div><div class="v" id="sparge">–<small>L</small></div></div>
             </div>
           </div>
         </div>
@@ -253,8 +254,8 @@
             <tr class="sum"><td>Total water</td><td id="b-total">–</td></tr>
           </tbody>
         </table>
-        <p style="margin:14px 0 0;color:var(--cream-dim);font-size:14px">Pre-boil volume: <b id="preboil" style="color:var(--cream)">–</b></p>
-        <p style="margin:6px 0 0;color:var(--cream-dim);font-size:14px">G40 dead space: <b id="b-dead" style="color:var(--hop)">–</b> in the strike, recovered into the boil, so it isn't in the total.</p>
+        <p style="margin:14px 0 0;color:var(--text-dim);font-size:14px">Pre-boil volume: <b id="preboil" style="color:var(--text)">–</b></p>
+        <p style="margin:6px 0 0;color:var(--text-dim);font-size:14px">G40 dead space: <b id="b-dead" style="color:var(--gold)">–</b> in the strike, recovered into the boil, so it isn't in the total.</p>
       </div>
     </section>
   </main>
