@@ -1,0 +1,9 @@
+{
+  "name": "liquor-line",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Brewing water calculator for the Grainfather G40",
+  "scripts": {
+    "test": "node --test brewcalc.test.js"
+  }
+}
