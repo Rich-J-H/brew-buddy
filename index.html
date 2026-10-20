@@ -81,7 +81,7 @@
     text-transform: uppercase; color: var(--gold);
   }
 
-  .field { margin-bottom: 16px; }
+  .field { margin-bottom: 16px; min-width: 0; }
   .field label {
     display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 12px;
     font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
@@ -95,12 +95,13 @@
   }
   .input:focus-within { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(224,181,74,0.3); }
   .input input {
-    flex: 1; min-width: 0; background: none; border: 0; outline: none;
+    /* width: 0 overrides the input's built-in ~20-character width so it can't push the + button out. */
+    flex: 1 1 0; width: 0; min-width: 0; background: none; border: 0; outline: none;
     color: var(--text); font: 600 20px/1 var(--body); padding: 12px 14px;
     -moz-appearance: textfield;
   }
   .input input::-webkit-outer-spin-button, .input input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .input .unit { padding-right: 6px; color: var(--text-dim); font-size: 14px; }
+  .input .unit { flex: none; padding-right: 6px; color: var(--text-dim); font-size: 14px; }
   .input button {
     flex: none; width: 44px; height: 46px; border: 0; background: none;
     color: var(--gold); font: 600 22px/1 var(--body); cursor: pointer;
@@ -196,7 +197,8 @@
     .card { padding: 18px 16px; border-radius: 16px; }
     .card h2 { font-size: 20px; margin-bottom: 14px; }
     .field { margin-bottom: 12px; }
-    .field label { font-size: 12px; }
+    .field label { font-size: 12px; flex-direction: column; align-items: flex-start; gap: 1px; }
+    .field label small { font-size: 12px; }
     .input input { padding: 10px 6px; text-align: center; }
     .hero { grid-template-columns: 76px minmax(0, 1fr); gap: 16px; }
     .vessel { min-height: 200px; }
