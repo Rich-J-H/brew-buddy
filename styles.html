@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1a1c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Brew Buddy">
+<title>Style Guide · Brew Buddy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/brewbuddy.css">
+<style>
+  .guide {
+    display: grid; gap: 24px; margin-top: 24px; align-items: start;
+    grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+  }
+
+  /* ---- Browser: search, filters, list ---- */
+  .browser { padding: 0; overflow: hidden; position: sticky; top: calc(12px + env(safe-area-inset-top, 0px)); }
+  .controls { padding: 18px 18px 12px; border-bottom: 1px solid var(--line); background: var(--ink-2); }
+  .search {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--ink-3); border: 1px solid var(--line); border-radius: 12px; padding: 0 6px 0 12px;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .search:focus-within { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(224,181,74,0.3); }
+  .search svg { flex: none; color: var(--text-dim); }
+  .search input {
+    flex: 1 1 0; width: 0; min-width: 0; background: none; border: 0; outline: none;
+    color: var(--text); font: 500 16px var(--body); padding: 12px 0;
+  }
+  .search input::placeholder { color: var(--text-dim); }
+  .search input::-webkit-search-cancel-button { display: none; }
+  .search button {
+    flex: none; width: 36px; height: 36px; border: 0; border-radius: 8px; background: none;
+    color: var(--text-dim); font-size: 20px; cursor: pointer; touch-action: manipulation;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .chips .lbl { width: 100%; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); margin-top: 2px; }
+  .chip {
+    border: 1px solid var(--line); background: none; color: var(--text-dim); border-radius: 999px;
+    font: 600 13px var(--body); padding: 7px 12px; cursor: pointer; touch-action: manipulation;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .chip i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .chip[aria-pressed="true"] { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+  .status { display: flex; justify-content: space-between; align-items: baseline; margin-top: 12px; font-size: 13px; color: var(--text-dim); }
+  .status button { border: 0; background: none; color: var(--teal); font: 600 13px var(--body); cursor: pointer; padding: 4px 0; }
+
+  .list { position: relative; max-height: calc(100dvh - 330px); min-height: 240px; overflow-y: auto; overscroll-behavior: contain; padding: 6px 0 12px; }
+  .group-h {
+    position: sticky; top: 0; z-index: 1; margin: 0; padding: 10px 18px 6px;
+    background: var(--ink-2); color: var(--gold);
+    font: 15px/1.2 var(--display); letter-spacing: 1px; text-transform: uppercase;
+  }
+  .group-h span { color: var(--text-dim); margin-right: 6px; }
+  .row {
+    display: grid; grid-template-columns: 14px 38px minmax(0, 1fr) auto; align-items: center; gap: 10px;
+    padding: 10px 18px; color: var(--text); text-decoration: none; border-left: 3px solid transparent;
+  }
+  .row:hover { background: rgba(238,246,244,0.04); }
+  .row[aria-current="true"] { background: rgba(224,181,74,0.10); border-left-color: var(--gold); }
+  .swatch { width: 14px; height: 14px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18); }
+  .swatch.none { background: repeating-linear-gradient(45deg, var(--text-dim) 0 2px, transparent 2px 4px); }
+  .row .id { font: 600 13px var(--body); color: var(--text-dim); font-variant-numeric: tabular-nums; }
+  .row .nm { font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; }
+  .row .abv { font-size: 13px; color: var(--text-dim); font-variant-numeric: tabular-nums; }
+  .empty { padding: 28px 18px; color: var(--text-dim); text-align: center; }
+  .gap-note { margin: 10px 18px 0; font-size: 12px; color: var(--text-dim); }
+
+  /* ---- Detail ---- */
+  .detail { min-height: 400px; }
+  .back {
+    display: none; align-items: center; gap: 6px; margin: -4px 0 14px; padding: 6px 0;
+    border: 0; background: none; color: var(--teal); font: 700 14px var(--body); letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+  }
+  .d-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--text-dim); font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+  .d-id { background: var(--gold); color: var(--ink); border-radius: 8px; padding: 3px 9px; font-weight: 800; letter-spacing: 0.5px; }
+  .detail h2.d-name { margin: 10px 0 0; font: 46px/1 var(--display); letter-spacing: 1px; text-transform: uppercase; color: var(--text); outline: none; }
+  .glass { height: 14px; border-radius: 999px; margin: 18px 0 6px; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15); }
+  .overall { font-size: 18px; line-height: 1.55; margin: 18px 0 0; }
+
+  .stats { display: grid; gap: 14px; margin: 24px 0 8px; padding: 18px; background: var(--ink-3); border: 1px solid var(--line); border-radius: 14px; }
+  .stat { display: grid; grid-template-columns: 52px minmax(0, 1fr) 118px; align-items: center; gap: 12px; }
+  .stat .k { font-size: 12px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-dim); }
+  .stat .v { font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  .stat .v small { display: block; font-size: 11px; font-weight: 600; color: var(--text-dim); }
+  .track { position: relative; height: 8px; border-radius: 999px; background: rgba(238,246,244,0.08); }
+  .track .fill { position: absolute; top: 0; bottom: 0; border-radius: 999px; background: linear-gradient(90deg, var(--teal), var(--gold)); min-width: 8px; }
+  .stat-srm .track { background: none; }
+  .stat-srm .track::before { content: ''; position: absolute; inset: 0; border-radius: 999px; background: linear-gradient(90deg, #FFE699, #F8A600, #CF6900, #8E2900, #5A0A02, #36080A); opacity: 0.7; }
+  .stat-srm .fill { background: none; box-shadow: 0 0 0 2px var(--text); }
+
+  .section { margin-top: 22px; }
+  .section h3 { margin: 0 0 6px; color: var(--gold); font: 17px/1.2 var(--display); letter-spacing: 1px; text-transform: uppercase; }
+  .section p { margin: 0; color: var(--text); opacity: 0.92; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tags span { font-size: 13px; border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; color: var(--text); }
+  .tags.dim span { color: var(--text-dim); font-size: 12px; }
+  details.cat { margin-top: 22px; border-top: 1px solid var(--line); padding-top: 14px; }
+  details.cat summary { cursor: pointer; color: var(--teal); font-weight: 700; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; }
+  details.cat p { margin: 10px 0 0; color: var(--text-dim); }
+  .pager { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 28px; }
+  .pager a {
+    display: block; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; text-decoration: none; color: var(--text);
+    min-width: 0;
+  }
+  .pager a:hover { border-color: var(--gold); }
+  .pager a small { display: block; color: var(--text-dim); font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+  .pager a b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pager a.next { text-align: right; grid-column: 2; }
+
+  .welcome h2 { margin-bottom: 10px; }
+  .welcome p { color: var(--text-dim); margin: 0 0 16px; }
+  .welcome .tags a { font-size: 14px; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; color: var(--text); text-decoration: none; }
+  .welcome .tags a:hover { border-color: var(--gold); }
+
+  footer a { color: var(--text-dim); }
+
+  /* ---- Phones and narrow tablets: one view at a time ---- */
+  @media (max-width: 899px) {
+    .guide { grid-template-columns: minmax(0, 1fr); }
+    .browser { position: static; overflow: visible; }
+    .controls { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 3; border-radius: 18px 18px 0 0; }
+    .list { max-height: none; min-height: 0; overflow: visible; }
+    .group-h { top: var(--controls-h, 0px); }
+    .guide[data-view="list"] .detail { display: none; }
+    .guide[data-view="detail"] .browser { display: none; }
+    .back { display: inline-flex; }
+  }
+  @media (max-width: 520px) {
+    .guide { margin-top: 16px; }
+    .controls { padding: 14px 14px 10px; border-radius: 16px 16px 0 0; }
+    .row { padding: 11px 14px; }
+    .group-h { padding: 10px 14px 6px; }
+    .gap-note { margin: 10px 14px 0; }
+    .detail h2.d-name { font-size: 36px; }
+    .overall { font-size: 17px; }
+    .stats { padding: 14px; }
+    .stat { grid-template-columns: 36px minmax(0, 1fr) 100px; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="appbar">
+    <a class="home-link" href="index.html" aria-label="Brew Buddy home"><span class="badge">BB</span><span class="wordmark">Brew Buddy</span></a>
+    <nav class="toolnav" aria-label="Tools">
+      <a href="water.html">Water</a>
+      <a href="styles.html" aria-current="page">Styles</a>
+    </nav>
+  </header>
+
+  <div class="pagehead">
+    <h1>Style Guide</h1>
+    <p>Every beer style · <b>BJCP 2021</b></p>
+  </div>
+
+  <div class="guide" id="guide" data-view="list">
+    <aside class="card browser" aria-label="Find a style">
+      <div class="controls" id="controls">
+        <div class="search" role="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="q" type="search" placeholder="Name, number or keyword" aria-label="Search styles" autocomplete="off" enterkeyhint="search">
+          <button type="button" id="clear-q" aria-label="Clear search" hidden>×</button>
+        </div>
+        <div class="chips" role="group" aria-label="Colour">
+          <button class="chip" type="button" data-group="colour" data-value="pale" aria-pressed="false"><i style="background:#FFCA5A"></i>Pale</button>
+          <button class="chip" type="button" data-group="colour" data-value="amber" aria-pressed="false"><i style="background:#C35900"></i>Amber</button>
+          <button class="chip" type="button" data-group="colour" data-value="dark" aria-pressed="false"><i style="background:#470606"></i>Dark</button>
+          <button class="chip" type="button" data-group="strength" data-value="session" aria-pressed="false">Session</button>
+          <button class="chip" type="button" data-group="strength" data-value="standard" aria-pressed="false">Standard</button>
+          <button class="chip" type="button" data-group="strength" data-value="strong" aria-pressed="false">Strong</button>
+        </div>
+        <div class="status"><span id="count" aria-live="polite"></span><button type="button" id="reset" hidden>Clear all</button></div>
+      </div>
+      <div class="list" id="list"></div>
+    </aside>
+
+    <article class="card detail" id="detail" aria-live="polite"></article>
+  </div>
+
+  <footer>
+    Style descriptions from the <a href="https://www.bjcp.org/style/2021/beer/" rel="noopener">BJCP 2021 Style Guidelines</a> © Beer Judge Certification Program.
+    Data via <a href="https://github.com/beerjson/bjcp-json" rel="noopener">BeerJSON</a>.
+  </footer>
+</div>
+
+<script src="assets/styles-data.js"></script>
+<script src="assets/styleguide.js"></script>
+<script>
+  const { styles, categories } = BJCP_STYLES;
+  const { search, srmToHex } = StyleGuide;
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const byId = new Map(styles.map(s => [s.id.toUpperCase(), s]));
+  const filters = { colour: [], strength: [] };
+  let listScroll = 0;
+
+  const SCALES = { og: [1.02, 1.13], fg: [0.994, 1.04], ibu: [0, 120], srm: [0, 45], abv: [0, 14] };
+  const LANG = { es: 'Spanish', pt: 'Portuguese' };
+  const SECTIONS = [
+    ['aroma', 'Aroma'], ['appearance', 'Appearance'], ['flavor', 'Flavour'], ['mouthfeel', 'Mouthfeel'],
+    ['comments', 'Comments'], ['history', 'History'], ['ingredients', 'Characteristic ingredients'],
+    ['comparison', 'Style comparison'],
+  ];
+
+  function swatch(s) {
+    if (!s.stats) return '<span class="swatch none" aria-hidden="true"></span>';
+    const [a, b] = s.stats.srm;
+    return `<span class="swatch" aria-hidden="true" style="background:linear-gradient(135deg, ${srmToHex(a)}, ${srmToHex(b)})"></span>`;
+  }
+  const abvText = s => s.stats ? `${s.stats.abv[0]}–${s.stats.abv[1]}%` : 'varies';
+
+  function row(s, current) {
+    return `<a class="row" href="#${s.id}" ${s.id === current ? 'aria-current="true"' : ''}>
+      ${swatch(s)}<span class="id">${s.id}</span><span class="nm">${esc(s.name)}</span><span class="abv">${abvText(s)}</span></a>`;
+  }
+
+  function currentId() {
+    const id = decodeURIComponent(location.hash.slice(1)).toUpperCase();
+    return byId.has(id) ? byId.get(id).id : null;
+  }
+
+  function renderList() {
+    const q = $('q').value;
+    const results = search(styles, q, filters);
+    const filtered = q.trim() || filters.colour.length || filters.strength.length;
+    const current = currentId();
+    $('clear-q').hidden = !q;
+    $('reset').hidden = !filtered;
+    $('count').textContent = filtered ? `${results.length} of ${styles.length} styles` : `${styles.length} styles`;
+
+    let html = '';
+    if (!results.length) {
+      html = `<div class="empty">No styles match${q.trim() ? ` “${esc(q.trim())}”` : ''}.<br>Try fewer words or clear the filters.</div>`;
+    } else if (q.trim()) {
+      html = results.map(s => row(s, current)).join(''); // ranked, best match first
+    } else {
+      let lastCat = null;
+      for (const s of results) {
+        if (s.category !== lastCat) {
+          lastCat = s.category;
+          const num = s.categoryId === 'X' ? '' : `<span>${s.categoryId}</span>`;
+          html += `<h3 class="group-h">${num}${esc(s.category)}</h3>`;
+        }
+        html += row(s, current);
+      }
+      if (!filtered) html += '<p class="gap-note">Categories 27 (Historical Beer) and 33 (Wood Beer) aren’t in the source data yet.</p>';
+    }
+    $('list').innerHTML = html;
+  }
+
+  function statRow(key, label, s) {
+    const [lo, hi] = s.stats[key];
+    const [min, max] = SCALES[key];
+    const pct = v => Math.max(0, Math.min(100, ((v - min) / (max - min)) * 100));
+    const left = pct(lo), width = Math.max(pct(hi) - left, 1.5);
+    let value;
+    if (key === 'og' || key === 'fg') value = `${lo.toFixed(3)}–${hi.toFixed(3)}`;
+    else if (key === 'abv') value = `${lo}–${hi}%`;
+    else if (key === 'srm') value = `${lo}–${hi}<small>EBC ${Math.round(lo * 1.97)}–${Math.round(hi * 1.97)}</small>`;
+    else value = `${lo}–${hi}`;
+    return `<div class="stat stat-${key}"><span class="k">${label}</span>
+      <div class="track" role="img" aria-label="${label} ${lo} to ${hi}"><div class="fill" style="left:${left}%;width:${width}%"></div></div>
+      <span class="v">${value}</span></div>`;
+  }
+
+  function renderDetail() {
+    const id = currentId();
+    const guide = $('guide');
+    guide.dataset.view = id ? 'detail' : 'list';
+    if (!id) {
+      const picks = ['18B', '21A', '16B', '10A', '25B', '5D'].map(i => byId.get(i)).filter(Boolean);
+      $('detail').innerHTML = `<div class="welcome"><h2>Pick a style</h2>
+        <p>Search by name, number (like 21A) or keyword such as “roasty” or “Belgian”, or narrow the list by colour and strength.</p>
+        <div class="tags">${picks.map(s => `<a href="#${s.id}">${esc(s.name)}</a>`).join('')}</div></div>`;
+      return;
+    }
+
+    const s = byId.get(id.toUpperCase());
+    const cat = categories.find(c => c.name === s.category);
+    const i = styles.indexOf(s);
+    const prev = styles[i - 1], next = styles[i + 1];
+    const t = s.text;
+    let html = `<button class="back" type="button" id="back">‹ All styles</button>
+      <div class="d-top"><span class="d-id">${s.id}</span><span>${esc(s.category)}</span></div>
+      <h2 class="d-name" tabindex="-1">${esc(s.name)}</h2>`;
+
+    if (s.stats) {
+      html += `<div class="glass" aria-hidden="true" style="background:linear-gradient(90deg, ${srmToHex(s.stats.srm[0])}, ${srmToHex(s.stats.srm[1])})"></div>`;
+    }
+    if (s.lang !== 'en') {
+      html += `<p class="note" style="margin-top:16px">This style’s description is only available in ${LANG[s.lang]} in the source data.</p>`;
+    }
+    if (t.overall) html += `<p class="overall">${esc(t.overall)}</p>`;
+
+    if (s.stats) {
+      html += `<div class="stats">${statRow('og', 'OG', s)}${statRow('fg', 'FG', s)}${statRow('ibu', 'IBU', s)}${statRow('srm', 'SRM', s)}${statRow('abv', 'ABV', s)}</div>`;
+    } else {
+      html += `<div class="note" style="margin-top:20px">${esc(t.vitals || 'Vital statistics vary with the base style.')}</div>`;
+    }
+
+    if (s.types.length) {
+      html += `<div class="section"><h3>Currently defined types</h3><div class="tags">${s.types.map(x => `<span>${esc(x)}</span>`).join('')}</div></div>`;
+    }
+    for (const [key, label] of SECTIONS) {
+      if (t[key]) html += `<div class="section"><h3>${label}</h3><p>${esc(t[key])}</p></div>`;
+    }
+    if (t.examples) {
+      const ex = t.examples.split(/,\s*/).filter(Boolean);
+      html += `<div class="section"><h3>Commercial examples</h3><div class="tags">${ex.map(x => `<span>${esc(x)}</span>`).join('')}</div></div>`;
+    }
+    if (t.entry) html += `<div class="section"><h3>Entry instructions</h3><p>${esc(t.entry)}</p></div>`;
+    if (t.notes) html += `<div class="section"><h3>Notes</h3><p>${esc(t.notes)}</p></div>`;
+    if (s.tags.length) {
+      html += `<div class="section"><h3>Tags</h3><div class="tags dim">${s.tags.map(x => `<span>${esc(x.replace(/-/g, ' '))}</span>`).join('')}</div></div>`;
+    }
+    if (cat && cat.description) {
+      html += `<details class="cat"><summary>About ${cat.id === 'X' ? '' : `category ${cat.id}: `}${esc(cat.name)}</summary><p>${esc(cat.description)}</p></details>`;
+    }
+    html += `<nav class="pager" aria-label="Neighbouring styles">
+      ${prev ? `<a href="#${prev.id}"><small>‹ ${prev.id}</small><b>${esc(prev.name)}</b></a>` : ''}
+      ${next ? `<a class="next" href="#${next.id}"><small>${next.id} ›</small><b>${esc(next.name)}</b></a>` : ''}</nav>`;
+
+    $('detail').innerHTML = html;
+    $('back').addEventListener('click', () => {
+      // Return to the list the way the user came, so phone back-swipes and this button agree.
+      if (history.state && history.state.fromList) history.back();
+      else location.hash = '';
+    });
+  }
+
+  const narrow = matchMedia('(max-width: 899px)');
+
+  function route() {
+    const wasList = $('guide').dataset.view === 'list';
+    renderDetail();
+    renderList();
+    const id = currentId();
+    if (narrow.matches) {
+      if (id) {
+        window.scrollTo(0, 0);
+        const h = document.querySelector('.d-name');
+        if (h) h.focus({ preventScroll: true });
+      } else if (!wasList) {
+        window.scrollTo(0, listScroll);
+      }
+    } else if (id) {
+      // Scroll only the list panel, never the page, to bring the open style into view.
+      const list = $('list'), active = list.querySelector('.row[aria-current="true"]');
+      if (active && (active.offsetTop < list.scrollTop || active.offsetTop + active.offsetHeight > list.scrollTop + list.clientHeight)) {
+        list.scrollTop = active.offsetTop - list.clientHeight / 2;
+      }
+    }
+  }
+
+  // Remember where the phone list was, and mark history entries opened from it.
+  $('list').addEventListener('click', e => {
+    const a = e.target.closest('a.row');
+    if (!a || !narrow.matches) return;
+    listScroll = window.scrollY;
+    e.preventDefault();
+    history.pushState({ fromList: true }, '', a.getAttribute('href'));
+    route();
+  });
+
+  $('q').addEventListener('input', renderList);
+  $('clear-q').addEventListener('click', () => { $('q').value = ''; renderList(); $('q').focus(); });
+  document.querySelectorAll('.chip').forEach(chip => chip.addEventListener('click', () => {
+    const { group, value } = chip.dataset;
+    const on = chip.getAttribute('aria-pressed') !== 'true';
+    chip.setAttribute('aria-pressed', on);
+    filters[group] = on ? [...filters[group], value] : filters[group].filter(v => v !== value);
+    renderList();
+  }));
+  $('reset').addEventListener('click', () => {
+    $('q').value = '';
+    filters.colour = []; filters.strength = [];
+    document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', 'false'));
+    renderList();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === '/' && document.activeElement.tagName !== 'INPUT') { e.preventDefault(); $('q').focus(); }
+  });
+  window.addEventListener('hashchange', route);
+  window.addEventListener('popstate', route);
+
+  // Keep group headings just under the sticky search bar on phones.
+  const setControlsHeight = () => document.documentElement.style.setProperty('--controls-h', `${$('controls').offsetHeight}px`);
+  if ('ResizeObserver' in window) new ResizeObserver(setControlsHeight).observe($('controls'));
+  setControlsHeight();
+
+  const initial = new URLSearchParams(location.search).get('q');
+  if (initial) $('q').value = initial;
+  route();
+</script>
+</body>
+</html>

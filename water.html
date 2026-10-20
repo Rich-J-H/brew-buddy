@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1a1c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Brew Buddy">
+<title>Water Calculator · Brew Buddy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/brewbuddy.css">
+<style>
+  main {
+    display: grid; gap: 24px; margin-top: 24px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  }
+  /* minmax(0, …) lets the column shrink to the screen instead of growing to fit its widest child. */
+  @media (max-width: 820px) { main { grid-template-columns: minmax(0, 1fr); } }
+
+  .field { margin-bottom: 16px; min-width: 0; }
+  .field label {
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 12px;
+    font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text-dim); margin-bottom: 6px;
+  }
+  .field label small { text-transform: none; letter-spacing: 0; font-weight: 400; }
+  .input {
+    display: flex; align-items: center;
+    background: var(--ink-3); border: 1px solid var(--line); border-radius: 12px;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .input:focus-within { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(224,181,74,0.3); }
+  .input input {
+    /* width: 0 overrides the input's built-in ~20-character width so it can't push the + button out. */
+    flex: 1 1 0; width: 0; min-width: 0; background: none; border: 0; outline: none;
+    color: var(--text); font: 600 20px/1 var(--body); padding: 12px 14px;
+    -moz-appearance: textfield;
+  }
+  .input input::-webkit-outer-spin-button, .input input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .input .unit { flex: none; padding-right: 6px; color: var(--text-dim); font-size: 14px; }
+  .input button {
+    flex: none; width: 44px; height: 46px; border: 0; background: none;
+    color: var(--gold); font: 600 22px/1 var(--body); cursor: pointer;
+    touch-action: manipulation; border-radius: 12px;
+  }
+  .input button:active { background: rgba(224,181,74,0.15); }
+  .input button:hover { color: var(--text); }
+  .field.invalid .input { border-color: #e5533d; }
+
+  details { margin-top: 8px; border-top: 1px dashed var(--line); padding-top: 14px; }
+  summary {
+    cursor: pointer; color: var(--teal); font-size: 13px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px;
+  }
+
+  .results { display: flex; flex-direction: column; gap: 20px; }
+  .hero {
+    display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 24px; align-items: stretch;
+  }
+  /* Phone-only results bar so the answer stays in view while editing the recipe. */
+  .dock { display: none; }
+  @media (max-width: 820px) {
+    .dock {
+      display: grid; grid-template-columns: 1.2fr 1fr 1fr;
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+      padding: 10px max(14px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-left, 0px));
+      background: rgba(11, 26, 28, 0.92);
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+      border-top: 1px solid var(--line);
+      transition: transform .25s ease;
+    }
+    .dock.away { transform: translateY(110%); }
+    .dock div { text-align: center; }
+    .dock div + div { border-left: 1px solid var(--line); }
+    .dock span { display: block; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); }
+    .dock b { font: 26px/1.1 var(--display); letter-spacing: 0.5px; font-weight: 400; }
+    .dock b small { font: 600 12px var(--body); color: var(--text-dim); margin-left: 3px; }
+    .dock .d-total b { color: var(--text); }
+    .dock .d-strike b { color: var(--gold); }
+    .dock .d-sparge b { color: var(--teal); }
+    body { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+  }
+
+  /* The vessel: sparge sits on top of strike, filled to scale. */
+  .vessel {
+    position: relative; border: 3px solid var(--text); border-top: 0;
+    border-radius: 0 0 22px 22px; min-height: 240px;
+    display: flex; flex-direction: column-reverse; overflow: hidden;
+    background: repeating-linear-gradient(0deg, transparent 0 23px, var(--line) 23px 24px);
+  }
+  .vessel::before, .vessel::after {
+    content: ''; position: absolute; top: 0; width: 10px; height: 3px; background: var(--text);
+  }
+  .vessel::before { left: -10px; } .vessel::after { right: -10px; }
+  .layer { transition: height .4s cubic-bezier(.2,.8,.2,1); }
+  .layer.strike { background: linear-gradient(180deg, var(--gold), var(--gold-deep)); }
+  .layer.sparge { background: linear-gradient(180deg, var(--teal), var(--teal-deep)); opacity: .85; }
+
+  .figures { display: flex; flex-direction: column; gap: 14px; justify-content: center; }
+  .total-label { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
+  .total { font: 72px/0.95 var(--display); color: var(--text); letter-spacing: 1px; }
+  .total span { font-size: 28px; color: var(--gold); margin-left: 6px; }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .pill {
+    border-radius: 14px; padding: 12px 14px; background: var(--ink-3); border: 1px solid var(--line);
+  }
+  .pill .k { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); }
+  .pill .k i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  .pill .v { font: 34px/1.1 var(--display); letter-spacing: 1px; }
+  .pill .v small { font: 600 14px var(--body); color: var(--text-dim); margin-left: 4px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  td { padding: 9px 0; border-bottom: 1px solid var(--line); }
+  td:last-child { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+  td .sub { display: block; font-size: 12px; color: var(--text-dim); }
+  tr.sum td { border-bottom: 0; border-top: 2px solid var(--gold); font-weight: 800; color: var(--gold); padding-top: 12px; }
+
+  @media (max-width: 520px) {
+    main { gap: 16px; margin-top: 16px; }
+    .field { margin-bottom: 12px; }
+    .field label { font-size: 12px; flex-direction: column; align-items: flex-start; gap: 1px; }
+    .field label small { font-size: 12px; }
+    .input input { padding: 10px 6px; text-align: center; }
+    .hero { grid-template-columns: 76px minmax(0, 1fr); gap: 16px; }
+    .vessel { min-height: 200px; }
+    .total { font-size: 58px; }
+    .total span { font-size: 24px; }
+    .split { grid-template-columns: 1fr; gap: 8px; }
+    .pill { padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; }
+    .pill .v { font-size: 28px; }
+  }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="appbar">
+    <a class="home-link" href="index.html" aria-label="Brew Buddy home"><span class="badge">BB</span><span class="wordmark">Brew Buddy</span></a>
+    <nav class="toolnav" aria-label="Tools">
+      <a href="water.html" aria-current="page">Water</a>
+      <a href="styles.html">Styles</a>
+    </nav>
+  </header>
+
+  <div class="pagehead">
+    <h1>Water Calculator</h1>
+    <p>Total, strike &amp; sparge · <b>Grainfather G40</b></p>
+  </div>
+
+  <main>
+    <section class="card" aria-labelledby="in-h">
+      <h2 id="in-h">The Recipe</h2>
+      <form id="form" novalidate>
+        <div class="field">
+          <label for="batch">Batch size <small>into the fermenter</small></label>
+          <div class="input"><button type="button" data-step="-1" aria-label="Decrease">−</button>
+            <input id="batch" type="text" inputmode="decimal" autocomplete="off" min="0" step="0.5" value="23"><span class="unit">L</span>
+            <button type="button" data-step="1" aria-label="Increase">+</button></div>
+        </div>
+        <div class="field">
+          <label for="grain">Grain bill</label>
+          <div class="input"><button type="button" data-step="-1" aria-label="Decrease">−</button>
+            <input id="grain" type="text" inputmode="decimal" autocomplete="off" min="0" step="0.1" value="5"><span class="unit">kg</span>
+            <button type="button" data-step="1" aria-label="Increase">+</button></div>
+        </div>
+        <div class="field">
+          <label for="boil">Boil time</label>
+          <div class="input"><button type="button" data-step="-1" aria-label="Decrease">−</button>
+            <input id="boil" type="text" inputmode="numeric" autocomplete="off" min="0" step="5" value="60"><span class="unit">min</span>
+            <button type="button" data-step="1" aria-label="Increase">+</button></div>
+        </div>
+        <div class="field">
+          <label for="rate">Boil-off rate</label>
+          <div class="input"><button type="button" data-step="-1" aria-label="Decrease">−</button>
+            <input id="rate" type="text" inputmode="decimal" autocomplete="off" min="0" step="0.1" value="3"><span class="unit">L/h</span>
+            <button type="button" data-step="1" aria-label="Increase">+</button></div>
+        </div>
+        <div class="field">
+          <label for="loss">Kettle &amp; transfer loss <small>trub, hops, chiller, hoses</small></label>
+          <div class="input"><button type="button" data-step="-1" aria-label="Decrease">−</button>
+            <input id="loss" type="text" inputmode="decimal" autocomplete="off" min="0" step="0.5" value="0"><span class="unit">L</span>
+            <button type="button" data-step="1" aria-label="Increase">+</button></div>
+        </div>
+
+        <details>
+          <summary>System constants</summary>
+          <div class="field">
+            <label for="dead">Dead space <small>recovered; adds to strike only</small></label>
+            <div class="input"><input id="dead" type="text" inputmode="decimal" autocomplete="off" min="0" step="0.5" value="8"><span class="unit">L</span></div>
+          </div>
+          <div class="field">
+            <label for="absorb">Grain absorption</label>
+            <div class="input"><input id="absorb" type="text" inputmode="decimal" autocomplete="off" min="0" step="0.05" value="0.8"><span class="unit">L/kg</span></div>
+          </div>
+          <div class="field">
+            <label for="ratio">Mash thickness</label>
+            <div class="input"><input id="ratio" type="text" inputmode="decimal" autocomplete="off" min="0" step="0.1" value="3"><span class="unit">L/kg</span></div>
+          </div>
+        </details>
+      </form>
+    </section>
+
+    <section class="results" aria-live="polite">
+      <div class="card">
+        <h2>Brew-Day Water</h2>
+        <div class="hero">
+          <div class="vessel" role="img" id="vessel" aria-label="">
+            <div class="layer strike" id="lay-strike"></div>
+            <div class="layer sparge" id="lay-sparge"></div>
+          </div>
+          <div class="figures">
+            <div>
+              <div class="total-label">Total water</div>
+              <div class="total" id="total">–<span>L</span></div>
+            </div>
+            <div class="split">
+              <div class="pill"><div class="k"><i style="background:var(--gold)"></i>Strike</div><div class="v" id="strike">–<small>L</small></div></div>
+              <div class="pill"><div class="k"><i style="background:var(--teal)"></i>Sparge</div><div class="v" id="sparge">–<small>L</small></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note" id="note" hidden></div>
+
+      <div class="card">
+        <h2>Where It Goes</h2>
+        <table>
+          <tbody>
+            <tr><td>Into the fermenter</td><td id="b-batch">–</td></tr>
+            <tr><td>Boil-off<span class="sub" id="b-boil-sub"></span></td><td id="b-boil">–</td></tr>
+            <tr><td>Grain absorption<span class="sub" id="b-abs-sub"></span></td><td id="b-abs">–</td></tr>
+            <tr><td>Kettle &amp; transfer loss</td><td id="b-loss">–</td></tr>
+            <tr class="sum"><td>Total water</td><td id="b-total">–</td></tr>
+          </tbody>
+        </table>
+        <p style="margin:14px 0 0;color:var(--text-dim);font-size:14px">Pre-boil volume: <b id="preboil" style="color:var(--text)">–</b></p>
+        <p style="margin:6px 0 0;color:var(--text-dim);font-size:14px">G40 dead space: <b id="b-dead" style="color:var(--gold)">–</b> in the strike, recovered into the boil, so it isn't in the total.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>Measure your own boil-off once and update it — it varies with element power and lid use.</footer>
+</div>
+
+<div class="dock" id="dock" aria-hidden="true">
+  <div class="d-total"><span>Total</span><b id="d-total">–<small>L</small></b></div>
+  <div class="d-strike"><span>Strike</span><b id="d-strike">–<small>L</small></b></div>
+  <div class="d-sparge"><span>Sparge</span><b id="d-sparge">–<small>L</small></b></div>
+</div>
+
+<script src="assets/brewcalc.js"></script>
+<script>
+  const { calculate, round } = BrewCalc;
+  const $ = id => document.getElementById(id);
+  const ids = ['batch', 'grain', 'boil', 'rate', 'loss', 'dead', 'absorb', 'ratio'];
+  const fmt = n => round(n, 1).toFixed(1);
+  const litres = n => `${fmt(n)} L`;
+
+  function read() {
+    let ok = true;
+    const v = {};
+    for (const id of ids) {
+      const el = $(id);
+      // Some iPhone keypads type a comma as the decimal point.
+      const raw = el.value.trim().replace(',', '.');
+      const n = raw === '' ? NaN : Number(raw);
+      const bad = !Number.isFinite(n) || n < 0;
+      el.closest('.field').classList.toggle('invalid', bad);
+      if (bad) ok = false;
+      v[id] = n;
+    }
+    return ok ? v : null;
+  }
+
+  function render() {
+    const v = read();
+    if (!v) return;
+    const r = calculate({
+      batchLitres: v.batch, grainKg: v.grain, boilMinutes: v.boil, boilOffPerHour: v.rate,
+      kettleLoss: v.loss, deadSpace: v.dead, absorption: v.absorb, mashRatio: v.ratio,
+    });
+
+    $('total').firstChild.nodeValue = fmt(r.total);
+    $('strike').firstChild.nodeValue = fmt(r.strike);
+    $('sparge').firstChild.nodeValue = fmt(r.sparge);
+    $('d-total').firstChild.nodeValue = fmt(r.total);
+    $('d-strike').firstChild.nodeValue = fmt(r.strike);
+    $('d-sparge').firstChild.nodeValue = fmt(r.sparge);
+
+    const pct = r.total > 0 ? r.strike / r.total : 0;
+    $('lay-strike').style.height = `${pct * 100}%`;
+    $('lay-sparge').style.height = `${(1 - pct) * 100}%`;
+    $('vessel').setAttribute('aria-label', `Strike ${fmt(r.strike)} litres, sparge ${fmt(r.sparge)} litres`);
+
+    $('b-batch').textContent = litres(r.breakdown.batch);
+    $('b-boil').textContent = litres(r.breakdown.boilOff);
+    $('b-boil-sub').textContent = `${v.boil} min at ${v.rate} L/h`;
+    $('b-abs').textContent = litres(r.breakdown.grainAbsorption);
+    $('b-abs-sub').textContent = `${v.grain} kg at ${v.absorb} L/kg`;
+    $('b-loss').textContent = litres(r.breakdown.kettleLoss);
+    $('b-dead').textContent = litres(r.breakdown.deadSpace);
+    $('b-total').textContent = litres(r.total);
+    $('preboil').textContent = litres(r.preBoil);
+
+    const note = $('note');
+    if (r.noSparge) {
+      note.className = 'note warn';
+      note.textContent = 'This grain bill needs every litre in the mash, so there is no sparge water. Consider a thinner batch or a smaller grain bill.';
+      note.hidden = false;
+    } else {
+      note.hidden = true;
+    }
+  }
+
+  $('form').addEventListener('input', render);
+  $('form').addEventListener('submit', e => e.preventDefault());
+  document.querySelectorAll('[data-step]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = btn.parentElement.querySelector('input');
+      const step = Number(input.getAttribute('step')) || 1;
+      const current = Number(input.value.trim().replace(',', '.')) || 0;
+      input.value = round(Math.max(0, current + step * Number(btn.dataset.step)), 2);
+      render();
+    });
+  });
+
+  // Hide the phone results bar while the full results are on screen.
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => {
+      $('dock').classList.toggle('away', entry.isIntersecting);
+    }, { threshold: 0.6 }).observe(document.querySelector('.hero'));
+  }
+  render();
+</script>
+</body>
+</html>

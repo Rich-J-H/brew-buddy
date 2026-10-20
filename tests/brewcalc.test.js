@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { calculate, round } = require('./brewcalc.js');
+const { calculate, round } = require('../assets/brewcalc.js');
 
 // Worked by hand: 19 L batch, 4.2 kg grain, 60 min boil at 3 L/h on a G40, no kettle loss.
 //   boil-off   = 3 L/h × 1 h            = 3.00

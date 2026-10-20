@@ -1,0 +1,106 @@
+/* Brew Buddy shared styles: brand tokens, app bar, page heading, cards. Tool pages add their own. */
+:root {
+  --ink: #0b1a1c;
+  --ink-2: #10262a;
+  --ink-3: #163338;
+  --text: #eef6f4;
+  --text-dim: #9fbab6;
+  --gold: #e0b54a;
+  --gold-deep: #b8862b;
+  --teal: #2ec4b6;
+  --teal-deep: #138a80;
+  --line: rgba(238, 246, 244, 0.12);
+  --display: 'Anton', 'Impact', 'Arial Narrow Bold', sans-serif;
+  --body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background:
+    radial-gradient(1200px 600px at 85% -10%, rgba(224,181,74,0.16), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(46,196,182,0.14), transparent 60%),
+    var(--ink);
+  background-attachment: fixed;
+  color: var(--text);
+  font: 16px/1.5 var(--body);
+  padding: env(safe-area-inset-top, 0px) max(20px, env(safe-area-inset-right, 0px)) 48px max(20px, env(safe-area-inset-left, 0px));
+  -webkit-tap-highlight-color: transparent;
+}
+a { color: var(--teal); }
+.wrap { max-width: 1040px; margin: 0 auto; }
+
+/* App bar: logo goes home, pills switch between tools. */
+.appbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 18px 0 12px;
+  border-bottom: 2px solid var(--gold);
+}
+.home-link {
+  display: flex; align-items: center; gap: 12px; min-width: 0;
+  color: var(--text); text-decoration: none;
+}
+.badge {
+  flex: none; width: 44px; height: 44px; border-radius: 50%;
+  background: var(--gold); color: var(--ink);
+  display: grid; place-items: center;
+  font: 19px/1 var(--display); letter-spacing: 0.5px;
+  box-shadow: 0 0 0 3px var(--ink), 0 0 0 5px var(--gold);
+}
+.wordmark { font: 26px/1 var(--display); letter-spacing: 1.5px; text-transform: uppercase; white-space: nowrap; }
+.toolnav { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.toolnav::-webkit-scrollbar { display: none; }
+.toolnav a {
+  flex: none; padding: 8px 14px; border-radius: 999px;
+  border: 1px solid var(--line); color: var(--text-dim);
+  font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; text-decoration: none;
+  touch-action: manipulation;
+}
+.toolnav a:hover { color: var(--text); border-color: var(--text-dim); }
+.toolnav a[aria-current="page"] { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+
+.pagehead { margin-top: 24px; }
+.pagehead h1 { margin: 0; font: 44px/1 var(--display); letter-spacing: 1.5px; text-transform: uppercase; }
+.pagehead p { margin: 6px 0 0; color: var(--text-dim); font-size: 14px; letter-spacing: 2px; text-transform: uppercase; }
+.pagehead p b { color: var(--teal); font-weight: 800; }
+
+.card {
+  background: linear-gradient(180deg, var(--ink-2), var(--ink));
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 24px;
+  min-width: 0;
+}
+.card h2 {
+  margin: 0 0 18px; font: 22px/1 var(--display); letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--gold);
+}
+
+.note {
+  border-left: 3px solid var(--teal); background: rgba(46,196,182,0.08);
+  padding: 10px 14px; border-radius: 0 10px 10px 0; font-size: 14px; color: var(--text);
+}
+.note.warn { border-color: var(--gold); background: rgba(224,181,74,0.10); }
+
+footer { margin-top: 28px; color: var(--text-dim); font-size: 13px; text-align: center; }
+
+@media (max-width: 520px) {
+  body { padding-left: max(14px, env(safe-area-inset-left, 0px)); padding-right: max(14px, env(safe-area-inset-right, 0px)); }
+  .appbar { padding: 12px 0 10px; }
+  .home-link { gap: 10px; }
+  .badge { width: 36px; height: 36px; font-size: 15px; box-shadow: 0 0 0 2px var(--ink), 0 0 0 4px var(--gold); }
+  .wordmark { font-size: 21px; letter-spacing: 1px; }
+  .toolnav a { padding: 8px 11px; font-size: 12px; letter-spacing: 0.5px; }
+  .pagehead { margin-top: 16px; }
+  .pagehead h1 { font-size: 32px; }
+  .pagehead p { font-size: 11px; letter-spacing: 1.2px; }
+  .card { padding: 18px 16px; border-radius: 16px; }
+  .card h2 { font-size: 20px; margin-bottom: 14px; }
+  footer { margin-top: 20px; }
+}
+@media (max-width: 380px) {
+  .wordmark { font-size: 18px; }
+}
